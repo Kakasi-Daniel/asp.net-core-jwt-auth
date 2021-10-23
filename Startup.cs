@@ -46,6 +46,7 @@ namespace auth
             {
                 opt.Password.RequireNonAlphanumeric = false;
                 opt.Password.RequireDigit = false;
+                opt.Password.RequireUppercase = false;
             }) 
                 .AddEntityFrameworkStores<DatabaseContext>()
                 .AddSignInManager<SignInManager<AppUser>>();
@@ -65,6 +66,19 @@ namespace auth
                 });
 
             services.AddScoped<TokenService>();
+
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .WithExposedHeaders("WWW-Authenticate", "Pagination")
+                        .WithOrigins("http://localhost:3000");
+                });
+            });
 
             //-----------Daniel 2021
 
@@ -91,6 +105,8 @@ namespace auth
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthentication();
 

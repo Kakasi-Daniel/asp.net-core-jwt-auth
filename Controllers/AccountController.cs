@@ -30,7 +30,6 @@ namespace auth.Controllers
         }
 
         [HttpPost("login")]
-
         public async Task<ActionResult<UserDto>> LogInUser([FromBody] LoginDto loginInfo)
         {
             var user = await userManager.FindByEmailAsync(loginInfo.Email);
@@ -53,8 +52,8 @@ namespace auth.Controllers
             }
 
             return Unauthorized();
-
         }
+
 
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register([FromBody]RegisterDto registrationInfo)
@@ -69,11 +68,18 @@ namespace auth.Controllers
                 return BadRequest("Username taken.");
             }
 
+            var dates = registrationInfo.BornDate.Split("-");
+
+            var dateBornInfo = new DateTime(int.Parse(dates[0]),int.Parse(dates[1]),int.Parse(dates[2]));
+
+            var finalAge = (int)Math.Floor((DateTime.Now - dateBornInfo).TotalDays/365);
+
             var user = new AppUser
             {
                 DisplayName = registrationInfo.DisplayName,
                 Email = registrationInfo.Email,
-                UserName = registrationInfo.Username
+                UserName = registrationInfo.Username,
+                Age = finalAge
             };
 
             var res = await userManager.CreateAsync(user, registrationInfo.Password);

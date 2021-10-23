@@ -25,7 +25,7 @@ namespace auth.Controllers
             this.userManager = userManager;
         }
 
-        [Authorize]
+        
         [HttpGet]
         public async Task<IActionResult> GetBooks()
         {
